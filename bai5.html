@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            padding-left: 300px;
+            padding-top: 100px;
+        }
+        .container {
+            
+            text-align: center;
+            border: 1px solid black;
+            height: 100%;
+            width: 600px;
+
+        }
+
+        .table {
+            margin-left: 100px;
+            border: 1px solid black;
+        }
+
+        tr {
+            border: 1px solid black;
+        }
+
+        th {
+            border: 1px solid black;
+        }
+
+        td {
+            border: 1px solid black;
+        }
+
+        .edit {
+            background-color: rgb(49, 214, 69);
+        }
+
+        .delete {
+            background-color: rgb(230, 14, 14);
+        }
+
+        #button {
+            background-color: blue;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>To do App</h1>
+        <input type="text" id="input" placeholder="nhap thong tin">
+        <button id="button" onclick="save()">SAVE</button>
+        <br><br>
+        <table class="table">
+            <tr>
+                <th>No.</th>
+                <th>Todo Item</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            <tbody id="push">
+
+            </tbody>
+
+
+        </table>
+
+    </div>
+
+    <script>
+        function save() {
+            let inputValue = document.getElementById("input");
+            let addList = JSON.parse(localStorage.getItem("data"));
+            
+                let editKey = JSON.parse(localStorage.getItem("keyId"));
+
+
+
+            if(editKey != null){
+                addList.splice(editKey,1,inputValue.value);
+                console.log(addList);
+                localStorage.setItem("data",JSON.stringify(addList))
+                reder(addList)
+                localStorage.removeItem("keyId")
+                document.getElementById("button").innerHTML = "Save";
+                inputValue.value = "";
+                return;
+
+            }
+
+
+            if (inputValue.value == "") {
+                
+            } else if (addList == null) {
+                addList = [];
+                addList.push(inputValue.value);
+                localStorage.setItem("data", JSON.stringify(addList));
+            } else {
+                addList.push(inputValue.value);
+                localStorage.setItem("data", JSON.stringify(addList));
+            }
+            reder(addList);
+            inputValue.value = '';
+        }
+
+        let getList = JSON.parse(localStorage.getItem("data"));
+        function reder(list) {
+            console.log(list);
+            let data1 = '';
+            for (i = 0; i < list.length; i++) {
+                data1 += `
+                 <tr>
+                    <td>${i + 1}</td>
+                    <td>${list[i]}</td>
+                    <td>In progress</td>
+                    <td>
+                        <button class="edit" onclick="editItem(${i})" >EDIT</button>
+<button class="delete" onclick="deleteItem(${i})">DELETE</button>
+                        <button class="finished">FINISHED</button>
+                    </td>
+                </tr>
+                `
+            }
+           
+            document.getElementById("push").innerHTML = data1;
+        }
+        reder(getList);
+
+        function deleteItem(i) {
+            let dataDelete = JSON.parse(localStorage.getItem("data"));
+            dataDelete.splice(i, 1);
+            localStorage.setItem("data", JSON.stringify(dataDelete));
+            reder(dataDelete)
+        }
+
+        function editItem(i){
+            let edit1 = JSON.parse(localStorage.getItem("data"));
+            document.getElementById("input").value = edit1[i];
+            document.getElementById("button").innerHTML = "edit";
+            let keyId = localStorage.setItem("keyId",JSON.stringify(i));
+            
+            
+        }
+        let input = document.getElementById("input");
+        input.addEventListener("keypress",function(event){
+            // event.preventDefault();
+            if(event.key == "Enter"){
+                event.preventDefault();
+    
+               document.getElementById("button").click();
+            }
+        })
+    
+            
+        </script>
+        </head>
